@@ -48,8 +48,3 @@ Once a buyer decides to purchase a product, they can initiate a direct chat with
    ```bash
    pear run --dev .
    ```
-
-## 📂 Main Directory Structure
-
-
----
