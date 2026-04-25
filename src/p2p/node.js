@@ -59,7 +59,7 @@ export async function createNode () {
             await swarm.destroy()
 
             // Esperamos que la tienda guarde los datos para que no se reescriban
-            await store.destroy()
+            await store.close()
 
         }
     }
