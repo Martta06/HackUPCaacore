@@ -2,46 +2,34 @@ import b4a from 'b4a';
 
 export function setupChat(socket) {
     const inputChat = document.getElementById('input-chat');
-    const btnEnviar = document.getElementById('btn-enviar');
     const boxMensajes = document.getElementById('mensajes');
 
-    socket.removeAllListeners('data') //elimina los escuchadores anteriores para que no haya duplicados
-    
-    //limpia el boton enviar
-    const nuevoBtn = btnEnviar.cloneNode(true)
-    btnEnviar.parentNode.replaceChild(nuevoBtn, btnEnviar)
+    socket.removeAllListeners('data')
 
+    // Reemplazamos el botón para limpiar listeners viejos
+    const btnViejo = document.getElementById('btn-enviar')
+    const btnEnviar = btnViejo.cloneNode(true)
+    btnViejo.parentNode.replaceChild(btnEnviar, btnViejo)
 
     // 1. Recibir un mensaje 
     socket.on('data', (data) => {
         try {
-            // Intentamos parsear como JSON
             const parsed = JSON.parse(b4a.toString(data));
-
-            // Solo mostramos en el chat si el tipo del mensaje es 'chat'
-            if (parsed.tipo === 'direct-mensage') {
+            if (parsed.tipo === 'direct-message') {
                 mostrarMensaje(parsed.texto, 'vendedor', boxMensajes);
             }
-
         } catch {
-            // Si no es JSON (mensaje plano), lo mostramos directamente
-            // Esto es por si Persona A no usa JSON todavía
             mostrarMensaje(b4a.toString(data), 'vendedor', boxMensajes);
         }
     });
 
-
-
     // 2. Enviar un mensaje
     btnEnviar.onclick = () => {
         const texto = inputChat.value.trim();
-
         if (texto !== "") {
-            //enviamos el mensaje en formato JSON
-            socket.write(JSON.stringify({ type: 'direct-message', content: texto }))
-
-            mostrarMensaje(texto, 'tu', boxMensajes); //mostrar el mensaje 
-            inputChat.value = ""; //limpia el imput
+            socket.write(JSON.stringify({ tipo: 'direct-message', texto }))
+            mostrarMensaje(texto, 'tu', boxMensajes);
+            inputChat.value = "";
         }
     };
 
@@ -50,7 +38,6 @@ export function setupChat(socket) {
         if (e.key === 'Enter') btnEnviar.click();
     };
 
-    //Errores
     socket.on('error', (err) => console.error('Error en el chat:', err));
     socket.on('close', () => alert('El vendedor se ha desconectado.'));
 }

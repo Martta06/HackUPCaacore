@@ -15,6 +15,13 @@ export async function discoverSeller (node, sellerPublicKey) {
     const discovery = node.swarm.join(topic, { server: false, client: true })
     await discovery.flushed()
 
+    // Capturamos el socket del chat
+
+    let chatSocket = null
+    node.swarm.on ('connection', (socket) => {
+        chatSocket = socket
+    })
+
     // Esperamos a que se descargue el catálogo
     await core.update({ wait: true })
     await new Promise(resolve => setTimeout(resolve, 2000))
@@ -52,6 +59,10 @@ export async function discoverSeller (node, sellerPublicKey) {
             const buffer = Buffer.from(imageRef.data, 'base64')
             const blob = new Blob([buffer], { type: imageRef.mimeType })
             return URL.createObjectURL(blob)
+        },
+
+        getChatSocket () {
+            return chatSocket
         }
     }
 }

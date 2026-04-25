@@ -26,6 +26,8 @@ export async function createSellerCatalog (node) {
     return {
         publicKey: core.key.toString('hex'),
 
+
+
         // Añade un producto. images = [{ buffer, filename, mimeType }]
         async addProduct (product, images = []) {
             const id = product.id || Date.now().toString()
@@ -46,6 +48,8 @@ export async function createSellerCatalog (node) {
 
             await bee.put(`product:${id}`, entry)
             return entry
+
+
         },
 
         // Devuelve la lista de productos del catálogo
@@ -63,6 +67,13 @@ export async function createSellerCatalog (node) {
         // Borra un producto del catálogo
         async deleteProduct (id) {
             await bee.del(`product:${id}`)
+        },
+
+        onPeerConnect (callback) {
+            node.swarm.on('connection', (socket) => {
+                callback (socket)
+            })
         }
+
     }
 }
