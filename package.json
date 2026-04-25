@@ -2,11 +2,11 @@
   "name": "s2b",
   "version": "0.1.0",
   "description": "Marketplace P2P over Pear Runtime",
-  "main": "app.js",
   "type": "module",
   "pear": {
     "name": "s2b",
     "type": "desktop",
+    "pre": "pear-electron/pre",
     "gui": {
       "backgroundColor": "#1a1a2e",
       "height": 720,
@@ -27,6 +27,8 @@
     "hyperbee": "^2.20.0",
     "hyperblobs": "^2.11.1",
     "hypercore-crypto": "^3.4.2",
-    "hyperswarm": "^4.17.0"
+    "hyperswarm": "^4.17.0",
+    "pear-bridge": "^1.2.5",
+    "pear-electron": "^1.7.28"
   }
 }
