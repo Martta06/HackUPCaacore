@@ -44,31 +44,25 @@ export async function createSellerCatalog (node) {
         publicKey: core.key.toString ('hex'),
         blobsKey: blobCore.key.toString ('hex'),
 
-        async addProduct (product, imagePaths = []) {
+        async addProduct (product, images = []) {
             
             // Si el producto no tiene id propio le asignamos uno que es la hora exacta en milisegundos
             const id = product.id || Date.now().toString()  
 
 
             // Creamos una lista vacía de imágenes y procesa una por una las rutas de las fotos que le pasamos
-            const images = []
-            for (const imgPath of imagePaths) {
-
-                // Lee el archivo con las imágenes y lo convierte en datos binarios
-                const buffer = await fs.readFile(imgPath)
+            const imageRefs = []
+            for (const img of images) {
 
                 // Le entregamos el bloque pesado a hyperblobs y  hyperblobs devuelve la identificación, (Id)
-                const blobId = await blobs.put(buffer)
-
-
-                // Guarda la ficha técnica de la imagen con los tres datos que el comprador necesita para reconstruirla
-                images.push({
+                const blobId = await blobs.put(Buffer.from(img.buffer))
+                imageRefs.push ({
                     id: blobId,
-                    filename: path.basename(imgPath),
-                    mimeType: getMimeType(imgPath)
+                    filename: img.filename,
+                    mimeType: img.mimeType
                 })
-            }
 
+            }
 
             const entry = {
 
