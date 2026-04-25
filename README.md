@@ -13,11 +13,11 @@ S2B is a decentralized marketplace where sellers can list their products and buy
 ---
 ## Features
  
-- 🛍️ **Seller dashboard** — list your products with photos, prices and descriptions
-- 🔍 **Buyer catalog** — connect to a seller and browse their products instantly
-- 💬 **Direct P2P chat** — talk directly with the seller, no intermediaries
-- 🔔 **Real-time notifications** — get notified when a buyer reaches out
-- ✏️ **Product management** — add and delete products from your store
+- **Seller dashboard** — list your products with photos, prices and descriptions
+- **Buyer catalog** — connect to a seller and browse their products instantly
+- **Direct P2P chat** — talk directly with the seller, no intermediaries
+- **Real-time notifications** — get notified when a buyer reaches out
+- **Product management** — add and delete products from your store
 ---
 
 ## How to Run
