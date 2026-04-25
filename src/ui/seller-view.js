@@ -2,52 +2,109 @@ import { createSellerCatalog } from '../p2p/seller.js'
 
 export function renderSellerView() {
     return `
+        <!-- PANTALLA 1: Tienda -->
         <div id="pantalla-tienda">
-            <h2>Mi tienda</h2>
-            <div class="clave-box">
-                <p>Comparte esta clave con tus compradores:</p>
-                <code id="mi-clave"></code>
-                <button id="btn-copiar-clave">Copiar</button>
+            <div id="tienda-header">
+                <h2>Tu Tienda P2P</h2>
+                <button id="btn-abrir-chat-seller">💬 Chat <span id="bolita" style="display:none">🔴</span></button>
             </div>
+            <div id="claves-box">
+                <p>Comparte esta clave con tus compradores:</p>
+                <div id="clave-row">
+                    <span id="clave-texto">Cargando...</span>
+                    <button id="btn-copiar">Copiar</button>
+                </div>
+            </div>
+            <div id="productos-header">
+                <h3>Tus productos</h3>
+                <button id="btn-añadir">+ Añadir producto</button>
+            </div>
+            <div id="lista-productos-seller"></div>
+        </div>
 
-            <h3>Añadir producto</h3>
-            <form id="form-producto">
-                <input id="prod-nombre" placeholder="Nombre" required />
-                <input id="prod-precio" type="number" step="0.01" placeholder="Precio €" required />
-                <textarea id="prod-descripcion" placeholder="Descripción"></textarea>
-                <input id="prod-imagenes" type="file" accept="image/*" multiple required />
-                <button type="submit">Publicar</button>
-            </form>
+        <!-- PANTALLA 2: Chat -->
+        <div id="pantalla-chat-seller" style="display:none">
+            <div id="chat-header">
+                <button id="btn-volver-seller">← Volver</button>
+                <h3 id="chat-titulo">Chat con el comprador</h3>
+            </div>
+            <div id="mensajes"></div>
+            <div id="chat-input-area">
+                <input id="input-chat" type="text" placeholder="Escribe un mensaje..." />
+                <button id="btn-enviar">Enviar</button>
+            </div>
+        </div>
 
-            <h3>Mis productos</h3>
-            <div id="mis-productos"></div>
+        <!-- PANTALLA 3: Añadir producto -->
+        <div id="pantalla-añadir" style="display:none">
+            <div id="añadir-header">
+                <button id="btn-volver-añadir">← Volver</button>
+                <h3>Añadir producto</h3>
+            </div>
+            <div id="formulario-producto">
+                <input id="input-nombre" type="text" placeholder="Nombre del producto" />
+                <input id="input-precio" type="number" placeholder="Precio en €" />
+                <textarea id="input-descripcion" placeholder="Descripción del producto..."></textarea>
+                <input id="input-imagen" type="file" accept="image/*" multiple />
+                <button id="btn-guardar-producto">Guardar producto</button>
+            </div>
         </div>
     `
 }
 
+// ============================================================
+// Lógica de la vista del seller
+// ============================================================
+
 export async function initSellerView(node) {
     document.body.innerHTML = renderSellerView()
 
+    // Crear catálogo P2P
     const catalog = await createSellerCatalog(node)
     const activeImageURLs = new Set()
 
-    document.getElementById('mi-clave').textContent = catalog.publicKey
+    // Mostrar la clave en pantalla
+    document.getElementById('clave-texto').textContent = catalog.publicKey
 
-    // Botón copiar clave
-    document.getElementById('btn-copiar-clave').onclick = () => {
+    // ----------- Botones de navegación -----------
+
+    document.getElementById('btn-copiar').onclick = () => {
         navigator.clipboard.writeText(catalog.publicKey)
-        alert('Clave copiada al portapapeles')
+        const btn = document.getElementById('btn-copiar')
+        btn.textContent = '✓ Copiado'
+        setTimeout(() => { btn.textContent = 'Copiar' }, 1500)
     }
 
-    // Form de añadir producto
-    document.getElementById('form-producto').onsubmit = async (e) => {
-        e.preventDefault()
+    document.getElementById('btn-añadir').onclick = () => {
+        mostrarPantalla('pantalla-añadir')
+    }
 
-        const name = document.getElementById('prod-nombre').value
-        const price = parseFloat(document.getElementById('prod-precio').value)
-        const description = document.getElementById('prod-descripcion').value
-        const fileInput = document.getElementById('prod-imagenes')
+    document.getElementById('btn-volver-añadir').onclick = () => {
+        mostrarPantalla('pantalla-tienda')
+    }
 
+    document.getElementById('btn-abrir-chat-seller').onclick = () => {
+        mostrarPantalla('pantalla-chat-seller')
+    }
+
+    document.getElementById('btn-volver-seller').onclick = () => {
+        mostrarPantalla('pantalla-tienda')
+    }
+
+    // ----------- Guardar producto -----------
+
+    document.getElementById('btn-guardar-producto').onclick = async () => {
+        const nombre = document.getElementById('input-nombre').value.trim()
+        const precio = parseFloat(document.getElementById('input-precio').value)
+        const descripcion = document.getElementById('input-descripcion').value.trim()
+        const fileInput = document.getElementById('input-imagen')
+
+        if (!nombre || isNaN(precio)) {
+            alert('Pon al menos nombre y precio')
+            return
+        }
+
+        // Convertimos los archivos seleccionados a buffers
         const images = await Promise.all(
             Array.from(fileInput.files).map(async (file) => ({
                 buffer: Buffer.from(await file.arrayBuffer()),
@@ -56,22 +113,40 @@ export async function initSellerView(node) {
             }))
         )
 
-        await catalog.addProduct({ name, price, description }, images)
+        await catalog.addProduct(
+            { name: nombre, price: precio, description: descripcion },
+            images
+        )
 
-        e.target.reset()
+        // Limpiamos el formulario
+        document.getElementById('input-nombre').value = ''
+        document.getElementById('input-precio').value = ''
+        document.getElementById('input-descripcion').value = ''
+        fileInput.value = ''
+
+        // Volvemos a la tienda y refrescamos
+        mostrarPantalla('pantalla-tienda')
         await refrescarProductos()
     }
 
+    // ----------- Lista de productos -----------
+
     async function refrescarProductos() {
         const productos = await catalog.listProducts()
-        const lista = document.getElementById('mis-productos')
+        const lista = document.getElementById('lista-productos-seller')
         cleanupImages()
         lista.innerHTML = ''
 
+        if (productos.length === 0) {
+            lista.innerHTML = '<p class="sin-productos">Aún no tienes productos. ¡Añade el primero!</p>'
+            return
+        }
+
         for (const p of productos) {
             const card = document.createElement('div')
-            card.className = 'producto-card'
+            card.className = 'producto-card-seller'
 
+            // Imagen
             if (p.images?.length > 0) {
                 const img = document.createElement('img')
                 const buffer = Buffer.from(p.images[0].data, 'base64')
@@ -82,19 +157,37 @@ export async function initSellerView(node) {
                 card.appendChild(img)
             }
 
-            const nombre = document.createElement('h3')
+            // Info
+            const info = document.createElement('div')
+            info.className = 'producto-info'
+
+            const nombre = document.createElement('h4')
             nombre.textContent = p.name
-            card.appendChild(nombre)
+            info.appendChild(nombre)
 
             const precio = document.createElement('p')
+            precio.className = 'precio'
             precio.textContent = `${p.price} €`
-            card.appendChild(precio)
+            info.appendChild(precio)
 
+            if (p.description) {
+                const desc = document.createElement('p')
+                desc.className = 'descripcion'
+                desc.textContent = p.description
+                info.appendChild(desc)
+            }
+
+            card.appendChild(info)
+
+            // Botón eliminar
             const btnBorrar = document.createElement('button')
-            btnBorrar.textContent = 'Eliminar'
+            btnBorrar.className = 'btn-eliminar'
+            btnBorrar.textContent = '🗑️ Eliminar'
             btnBorrar.onclick = async () => {
-                await catalog.deleteProduct(p.id)
-                await refrescarProductos()
+                if (confirm(`¿Eliminar "${p.name}"?`)) {
+                    await catalog.deleteProduct(p.id)
+                    await refrescarProductos()
+                }
             }
             card.appendChild(btnBorrar)
 
@@ -102,10 +195,21 @@ export async function initSellerView(node) {
         }
     }
 
+    // ----------- Helpers -----------
+
+    function mostrarPantalla(id) {
+        ['pantalla-tienda', 'pantalla-chat-seller', 'pantalla-añadir'].forEach(pid => {
+            const el = document.getElementById(pid)
+            if (el) el.style.display = pid === id ? 'block' : 'none'
+        })
+    }
+
     function cleanupImages() {
         for (const url of activeImageURLs) URL.revokeObjectURL(url)
         activeImageURLs.clear()
     }
 
+    // Pintamos los productos iniciales
     await refrescarProductos()
 }
+
