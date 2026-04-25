@@ -429,6 +429,7 @@ nav p { font-size: 0.85rem; color: #aaa; }
     flex-direction: column;
     gap: 15px;
     max-width: 500px;
+    margin: 0 auto;
 }
 
 #formulario-producto input,
@@ -583,4 +584,73 @@ nav p { font-size: 0.85rem; color: #aaa; }
     #pantalla-rol button {
         max-width: 400px;
     }
+}
+
+/* --- PRODUCTOS SELLER --- */
+#lista-productos-seller {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.producto-card-seller {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.producto-card-seller:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(231,84,128,0.15);
+}
+
+.producto-card-seller img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.producto-info {
+    padding: 15px;
+}
+
+.producto-info h4 {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.producto-info .precio {
+    color: #e75480;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+}
+
+.producto-info .descripcion {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.btn-eliminar {
+    width: 100%;
+    background: #fff0f5;
+    color: #e75480;
+    border: 2px solid #f9a8c9;
+    padding: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    margin: 0 15px 15px 15px;
+    width: calc(100% - 30px);
+}
+
+.btn-eliminar:hover {
+    background: #e75480;
+    color: white;
+    border-color: #e75480;
 }
