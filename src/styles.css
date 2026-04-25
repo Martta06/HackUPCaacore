@@ -3,13 +3,13 @@
     margin: 0;
     padding: 0;
 }
- 
+
 body {
     font-family: 'Segoe UI', sans-serif;
     background: #fafafa;
     color: #222;
 }
- 
+
 /* --- NAVBAR --- */
 nav {
     background: white;
@@ -22,23 +22,17 @@ nav {
     top: 0;
     z-index: 10;
 }
- 
+
 nav .logo {
     font-size: 1.8rem;
     font-weight: 800;
     color: #e75480;
     letter-spacing: -1px;
 }
- 
-nav .logo span {
-    color: #f9a8c9;
-}
- 
-nav p {
-    font-size: 0.85rem;
-    color: #aaa;
-}
- 
+
+nav .logo span { color: #f9a8c9; }
+nav p { font-size: 0.85rem; color: #aaa; }
+
 /* --- PANTALLAS --- */
 #pantalla-conexion,
 #pantalla-catalogo,
@@ -47,7 +41,7 @@ nav p {
     max-width: 900px;
     margin: auto;
 }
- 
+
 /* --- CONEXION --- */
 #pantalla-conexion {
     display: flex;
@@ -57,19 +51,19 @@ nav p {
     min-height: 80vh;
     text-align: center;
 }
- 
+
 #pantalla-conexion h2 {
     font-size: 2rem;
     color: #e75480;
     margin-bottom: 10px;
 }
- 
+
 #pantalla-conexion > p {
     color: #888;
     margin-bottom: 25px;
     font-size: 1rem;
 }
- 
+
 #input-clave {
     width: 100%;
     max-width: 500px;
@@ -83,11 +77,9 @@ nav p {
     margin-bottom: 10px;
     text-align: center;
 }
- 
-#input-clave:focus {
-    border-color: #e75480;
-}
- 
+
+#input-clave:focus { border-color: #e75480; }
+
 #btn-conectar {
     width: 100%;
     max-width: 500px;
@@ -101,31 +93,49 @@ nav p {
     cursor: pointer;
     transition: background 0.2s;
 }
- 
-#btn-conectar:hover {
-    background: #c73d68;
-}
- 
+
+#btn-conectar:hover { background: #c73d68; }
+
 #estado-conexion {
     margin-top: 15px;
     color: #e75480;
     font-size: 0.9rem;
     min-height: 20px;
 }
- 
+
 /* --- CATALOGO --- */
-#pantalla-catalogo h2 {
-    font-size: 1.5rem;
-    color: #333;
+#catalogo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 20px;
 }
- 
+
+#catalogo-header h2 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+#btn-abrir-chat {
+    background: #e75480;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#btn-abrir-chat:hover { background: #c73d68; }
+
 #lista-productos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
 }
- 
+
 .product-card {
     background: white;
     border-radius: 16px;
@@ -133,35 +143,33 @@ nav p {
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
     transition: transform 0.2s, box-shadow 0.2s;
 }
- 
+
 .product-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(231,84,128,0.15);
 }
- 
+
 .product-card img {
     width: 100%;
     height: 180px;
     object-fit: cover;
 }
- 
-.product-card .card-body {
-    padding: 15px;
-}
- 
+
+.product-card .card-body { padding: 15px; }
+
 .product-card h3 {
     font-size: 1rem;
     color: #333;
     margin-bottom: 4px;
 }
- 
+
 .product-card .precio {
     color: #e75480;
     font-weight: 700;
     font-size: 1.1rem;
     margin-bottom: 12px;
 }
- 
+
 .product-card button {
     width: 100%;
     background: #fff0f5;
@@ -173,13 +181,13 @@ nav p {
     font-weight: 600;
     transition: all 0.2s;
 }
- 
+
 .product-card button:hover {
     background: #e75480;
     color: white;
     border-color: #e75480;
 }
- 
+
 /* --- CHAT --- */
 #chat-header {
     display: flex;
@@ -189,7 +197,7 @@ nav p {
     padding-bottom: 15px;
     border-bottom: 2px solid #f9a8c9;
 }
- 
+
 #btn-volver {
     background: #fff0f5;
     border: 2px solid #f9a8c9;
@@ -200,19 +208,19 @@ nav p {
     font-weight: 600;
     transition: all 0.2s;
 }
- 
+
 #btn-volver:hover {
     background: #e75480;
     color: white;
     border-color: #e75480;
 }
- 
+
 #chat-titulo {
     font-size: 1.1rem;
     color: #333;
     font-weight: 700;
 }
- 
+
 #mensajes {
     height: 420px;
     overflow-y: auto;
@@ -225,7 +233,7 @@ nav p {
     flex-direction: column;
     gap: 8px;
 }
- 
+
 #mensajes p {
     padding: 10px 14px;
     border-radius: 14px;
@@ -233,25 +241,22 @@ nav p {
     font-size: 0.95rem;
     line-height: 1.4;
 }
- 
+
 .msg-vendedor {
     background: white;
     border: 1px solid #f9a8c9;
     color: #333;
     align-self: flex-start;
 }
- 
+
 .msg-yo {
     background: #e75480;
     color: white;
     align-self: flex-end;
 }
- 
-#chat-input-area {
-    display: flex;
-    gap: 10px;
-}
- 
+
+#chat-input-area { display: flex; gap: 10px; }
+
 #input-chat {
     flex: 1;
     padding: 12px 16px;
@@ -262,11 +267,9 @@ nav p {
     background: white;
     color: #333;
 }
- 
-#input-chat:focus {
-    border-color: #e75480;
-}
- 
+
+#input-chat:focus { border-color: #e75480; }
+
 #btn-enviar {
     background: #e75480;
     color: white;
@@ -278,7 +281,5 @@ nav p {
     cursor: pointer;
     transition: background 0.2s;
 }
- 
-#btn-enviar:hover {
-    background: #c73d68;
-}
+
+#btn-enviar:hover { background: #c73d68; }
