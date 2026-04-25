@@ -39,5 +39,5 @@ pear run --dev .
 Team members:
  
 - Marta Breton
-- Dani Suso
+- Daniel Suso
 - Martina Ruiz
