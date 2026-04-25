@@ -44,16 +44,12 @@ export function setupChat(socket) {
 
 function mostrarMensaje(texto, autor, contenedor) {
     const p = document.createElement('p');
-    p.style.padding = "5px";
-    p.style.margin = "5px";
-    p.style.borderRadius = "5px";
 
     if (autor === 'vendedor') {
-        p.style.background = "#3e3e5e";
+        p.className = 'msg-vendedor';
         p.innerText = `Vendedor: ${texto}`;
     } else {
-        p.style.background = "#4e9af1";
-        p.style.textAlign = "right";
+        p.className = 'msg-yo';
         p.innerText = `Tú: ${texto}`;
     }
 
