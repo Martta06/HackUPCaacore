@@ -38,7 +38,7 @@ export async function createNode () {
     // Checks que aparecen al conectarte 
 
     //1. Que el nodo está listo
-    console.log('✓ Nodo P2P listo')
+    console.log('Nodo P2P listo')
 
     //2. El código que te identifica como vendedor
     console.log('  Identidad:', publicKey)
