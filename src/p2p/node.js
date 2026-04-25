@@ -5,15 +5,17 @@ import Corestore from 'corestore'
 import b4a from 'b4a'
 
 
-export async function createNode (storageName = 'corestore') {
+export async function createNode () {
 
-    const storagePath = (typeof Pear !== 'undefined')  // Asegura que estamos dentro de Pear
-    ? Pear.config.storage + '/' + storageName
-    : './data/' + storageName    // Si no, crea una carpeta local
+    const args = (typeof Pear !== 'undefined') ? Pear.config.args : process.argv.slice(2)
+    const storageName = args[0] || 'corestore'
 
-    // Crea una instancia de Corestore
-    const store = new Corestore (storagePath)
-    await store.ready()  // Espera a que el disco duro responda
+    const storagePath = (typeof Pear !== 'undefined')
+        ? Pear.config.storage + '/' + storageName
+        : './data/' + storageName
+
+    const store = new Corestore(storagePath)
+    await store.ready()
 
 
     // Activamos la "antena", con la instancia de Hyperswarm nos conectamos a la red globlal de nodos.
