@@ -42,6 +42,14 @@ nav p { font-size: 0.85rem; color: #aaa; }
     margin: auto;
 }
 
+#pantalla-tienda,
+#pantalla-chat-seller,
+#pantalla-añadir {
+    padding: 40px 30px;
+    max-width: 900px;
+    margin: auto;
+}
+
 /* --- CONEXION --- */
 #pantalla-conexion {
     display: flex;
