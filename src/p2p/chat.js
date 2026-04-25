@@ -5,6 +5,13 @@ export function setupChat(socket) {
     const btnEnviar = document.getElementById('btn-enviar');
     const boxMensajes = document.getElementById('mensajes');
 
+    socket.removeAllListeners('data') //elimina los escuchadores anteriores para que no haya duplicados
+    
+    //limpia el boton enviar
+    const nuevoBtn = btnEnviar.cloneNode(true)
+    btnEnviar.parentNode.replaceChild(nuevoBtn, btnEnviar)
+
+
     // 1. Recibir un mensaje 
     socket.on('data', (data) => {
         try {
