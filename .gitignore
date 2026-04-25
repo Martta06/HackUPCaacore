@@ -1,0 +1,8 @@
+node_modules/
+.pear/
+pear/
+*.log
+.DS_Store
+data/
+.vscode/
+
