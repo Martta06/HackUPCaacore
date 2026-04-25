@@ -11,6 +11,16 @@ async function main () {
   const node = await createNode('buyer')
 
   console.log('🟡 Buscando al seller...')
+    // Conexión directa por IP, saltándonos el DHT
+    import b4a from 'b4a'
+
+    const SELLER_IP = '192.168.X.X'   // la IP que te pasó
+    const SELLER_PORT = XXXXX          // el puerto que te pasó
+
+    console.log('🟡 Conectando directamente al seller...')
+    const socket = node.swarm.dht.connect(b4a.from(SELLER_KEY, 'hex'))
+    socket.on('open', () => console.log('✅ Conectado directamente'))
+    socket.on('error', (e) => console.log('❌ Error de conexión:', e.message))
   const seller = await discoverSeller(node, SELLER_KEY, BLOBS_KEY)
 
   console.log('\n✅ Productos encontrados:')
