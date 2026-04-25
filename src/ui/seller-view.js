@@ -114,19 +114,17 @@ export async function initSellerView(node) {
         document.getElementById('bolita').style.display = 'none'
 
         if (chatSocketActivo) {
-            // Limpiamos el contenedor y pintamos los mensajes pendientes
             const boxMensajes = document.getElementById('mensajes')
             boxMensajes.innerHTML = ''
+
+            // Pintamos los mensajes pendientes con las clases CSS correctas
             for (const texto of mensajesPendientes) {
                 const p = document.createElement('p')
-                p.style.padding = "5px"
-                p.style.margin = "5px"
-                p.style.borderRadius = "5px"
-                p.style.background = "#3e3e5e"
+                p.className = 'msg-vendedor'  // ← usa la clase CSS en lugar de estilos hardcodeados
                 p.innerText = `Comprador: ${texto}`
                 boxMensajes.appendChild(p)
             }
-            mensajesPendientes.length = 0  // vaciamos la cola
+            mensajesPendientes.length = 0
 
             setupChat(chatSocketActivo)
         } else {
