@@ -28,6 +28,7 @@ export async function discoverSeller(node, sellerPublickey, sellerBlobskey) {
     // Hasta ahora hemos conectado correctamente los nodos pero aquí vemos el catálogo de lo que ofrecen
     await core.update({wait: true})
     await blobCore.update({wait: true})
+    await new Promise(resolve => setTimeout(resolve, 2000)) // Espera después de unirse al swarn
 
 
     // Con esto conseguimos una réplica de la infraestructura del vendedor
@@ -57,7 +58,7 @@ export async function discoverSeller(node, sellerPublickey, sellerBlobskey) {
         async getImage (blobRef) {
             // blobRef = { id, filename, mimeType } tal como lo guardó el seller
 
-            const buffer = await blobs.get(blobRef.id)
+            const buffer = await blobs.get(blobRef)
             return {
                 buffer,
                 filename: blobRef.filename,
@@ -69,7 +70,7 @@ export async function discoverSeller(node, sellerPublickey, sellerBlobskey) {
         async getImageURL (blobRef) {
 
             // Se conecta a la red P2P y descarga los fragmentos de la imagen, devolviendo los datos en binario
-            const buffer = await blobs.get(blobRef.id) 
+            const buffer = await blobs.get(blobRef) 
 
 
             // Empaquetamos los datos en binario crudo en un 'sobre' llamado blob

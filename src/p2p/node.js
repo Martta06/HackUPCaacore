@@ -5,11 +5,11 @@ import Corestore from 'corestore'
 import b4a from 'b4a'
 
 
-export async function createNode () {
+export async function createNode (storageName = 'corestore') {
 
     const storagePath = (typeof Pear !== 'undefined')  // Asegura que estamos dentro de Pear
-    ? Pear.config.storage + '/corestore'
-    : './data/corestore'    // Si no, crea una carpeta local
+    ? Pear.config.storage + '/' + storageName
+    : './data/' + storageName    // Si no, crea una carpeta local
 
     // Crea una instancia de Corestore
     const store = new Corestore (storagePath)
