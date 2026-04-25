@@ -10,17 +10,19 @@ export async function discoverSeller (node, sellerPublicKey) {
     const core = node.store.get({ key })
     await core.ready()
 
+    // Capturamos el socket del chat
+    let chatSocket = null
+    node.swarm.on ('connection', (socket) => {
+        chatSocket = socket
+        console.log('🟢 Socket de chat capturado en el buyer')
+    })
+
+
     // Nos unimos al topic del vendedor para encontrarlo
     const topic = crypto.hash(key)
     const discovery = node.swarm.join(topic, { server: false, client: true })
     await discovery.flushed()
 
-    // Capturamos el socket del chat
-
-    let chatSocket = null
-    node.swarm.on ('connection', (socket) => {
-        chatSocket = socket
-    })
 
     // Esperamos a que se descargue el catálogo
     await core.update({ wait: true })

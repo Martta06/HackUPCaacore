@@ -1,11 +1,12 @@
 import { createSellerCatalog } from '../p2p/seller.js'
+import { setupChat } from '../p2p/chat.js'
 
 export function renderSellerView() {
     return `
         <!-- PANTALLA 1: Tienda -->
         <div id="pantalla-tienda">
             <div id="tienda-header">
-                <h2>Tu Tienda P2P</h2>
+                <h2>Tu Tienda S2B</h2>
                 <button id="btn-abrir-chat-seller">💬 Chat <span id="bolita" style="display:none">🔴</span></button>
             </div>
             <div id="claves-box">
@@ -63,9 +64,34 @@ export async function initSellerView(node) {
     const catalog = await createSellerCatalog(node)
     const activeImageURLs = new Set()
 
+    // Variable que guardará el socket del comprador conectado
+
     // Mostrar la clave en pantalla
     document.getElementById('clave-texto').textContent = catalog.publicKey
 
+    // ----------- CHAT: capturar conexiones de compradores -----------
+
+    // Variables para el chat
+    let chatSocketActivo = null
+    const mensajesPendientes = []  // mensajes recibidos antes de abrir el chat
+
+    catalog.onPeerConnect((socket) => {
+        chatSocketActivo = socket
+        document.getElementById('bolita').style.display = 'inline'
+        console.log('🟢 Comprador conectado al chat')
+
+        // Capturamos mensajes que lleguen antes de abrir el chat
+        socket.on('data', (data) => {
+            try {
+                const parsed = JSON.parse(data.toString())
+                if (parsed.tipo === 'direct-message') {
+                    mensajesPendientes.push(parsed.texto)
+                }
+            } catch {
+
+            }
+        })
+    })
     // ----------- Botones de navegación -----------
 
     document.getElementById('btn-copiar').onclick = () => {
@@ -85,6 +111,28 @@ export async function initSellerView(node) {
 
     document.getElementById('btn-abrir-chat-seller').onclick = () => {
         mostrarPantalla('pantalla-chat-seller')
+        document.getElementById('bolita').style.display = 'none'
+
+        if (chatSocketActivo) {
+            // Limpiamos el contenedor y pintamos los mensajes pendientes
+            const boxMensajes = document.getElementById('mensajes')
+            boxMensajes.innerHTML = ''
+            for (const texto of mensajesPendientes) {
+                const p = document.createElement('p')
+                p.style.padding = "5px"
+                p.style.margin = "5px"
+                p.style.borderRadius = "5px"
+                p.style.background = "#3e3e5e"
+                p.innerText = `Comprador: ${texto}`
+                boxMensajes.appendChild(p)
+            }
+            mensajesPendientes.length = 0  // vaciamos la cola
+
+            setupChat(chatSocketActivo)
+        } else {
+            document.getElementById('mensajes').innerHTML =
+                '<p style="color:#888; padding:10px">Aún no hay compradores conectados.</p>'
+        }
     }
 
     document.getElementById('btn-volver-seller').onclick = () => {
@@ -104,7 +152,6 @@ export async function initSellerView(node) {
             return
         }
 
-        // Convertimos los archivos seleccionados a buffers
         const images = await Promise.all(
             Array.from(fileInput.files).map(async (file) => ({
                 buffer: Buffer.from(await file.arrayBuffer()),
@@ -118,13 +165,11 @@ export async function initSellerView(node) {
             images
         )
 
-        // Limpiamos el formulario
         document.getElementById('input-nombre').value = ''
         document.getElementById('input-precio').value = ''
         document.getElementById('input-descripcion').value = ''
         fileInput.value = ''
 
-        // Volvemos a la tienda y refrescamos
         mostrarPantalla('pantalla-tienda')
         await refrescarProductos()
     }
@@ -146,7 +191,6 @@ export async function initSellerView(node) {
             const card = document.createElement('div')
             card.className = 'producto-card-seller'
 
-            // Imagen
             if (p.images?.length > 0) {
                 const img = document.createElement('img')
                 const buffer = Buffer.from(p.images[0].data, 'base64')
@@ -157,7 +201,6 @@ export async function initSellerView(node) {
                 card.appendChild(img)
             }
 
-            // Info
             const info = document.createElement('div')
             info.className = 'producto-info'
 
@@ -179,7 +222,6 @@ export async function initSellerView(node) {
 
             card.appendChild(info)
 
-            // Botón eliminar
             const btnBorrar = document.createElement('button')
             btnBorrar.className = 'btn-eliminar'
             btnBorrar.textContent = '🗑️ Eliminar'
@@ -209,7 +251,5 @@ export async function initSellerView(node) {
         activeImageURLs.clear()
     }
 
-    // Pintamos los productos iniciales
     await refrescarProductos()
 }
-

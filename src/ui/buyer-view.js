@@ -5,7 +5,7 @@ export function renderBuyerView() {
     return `
         <!-- PANTALLA 1: Conexión -->
         <div id="pantalla-conexion">
-            <h2>Tienda P2P de Ropa</h2>
+            <h2>S2B</h2>
             <p>Introduce la clave de la tienda:</p>
             <input id="input-clave" type="text" placeholder="Pega aquí la clave..." />
             <button id="btn-conectar">Conectar</button>
@@ -75,7 +75,14 @@ export async function initBuyerView(node) {
     document.getElementById('btn-abrir-chat').onclick = () => {
         if (!seller) return
         mostrarPantalla('pantalla-chat')
-        // setupChat(...) — adáptalo cuando tengas la lógica de chat lista
+
+        const socket = seller.getChatSocket()
+        if (socket) {
+            setupChat(socket)
+        } else {
+            document.getElementById('mensajes').innerHTML =
+                '<p style="color:#888; padding:10px">Esperando conexión con el vendedor...</p>'
+        }
     }
 
     // Botón volver al catálogo
