@@ -27,13 +27,41 @@ export async function createNode () {
     })
 
 
-    // Identificación de la tienda dentro del sistema
+    // Identificación del nodo local
     const identityCore = store.get ({name: 'identity'})
     await identityCore.ready()  // Espera a que el identityCore esté listo para generar una clave pública
 
+    // Clave que se comparte con el mundo para conectar, se traduce a texto para poder compartilo, (via mensaje, was, etc)
+    const publicKey = b4a.toString (identityCore.key, 'hex')
 
 
+    // Checks que aparecen al conectarte 
+
+    //1. Que el nodo está listo
+    console.log('✓ Nodo P2P listo')
+
+    //2. El código que te identifica como vendedor
+    console.log('  Identidad:', publicKey)
+
+    //3. Indica donde se están guardando los datos en el ordenador
+    console.log('  Storage:  ', storagePath)
 
 
+    return {
+        store,
+        swarm,
+        publicKey,
+
+        async destroy () {
+            console.log ('Cerrando el nodo')
+
+            // Avisamos al resto de nodos de que se cierra
+            await swarm.destroy()
+
+            // Esperamos que la tienda guarde los datos para que no se reescriban
+            await store.destroy()
+
+        }
+    }
 
 }
