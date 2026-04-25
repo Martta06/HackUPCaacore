@@ -19,7 +19,7 @@ export function setupChat(socket) {
             const parsed = JSON.parse(b4a.toString(data));
 
             // Solo mostramos en el chat si el tipo del mensaje es 'chat'
-            if (parsed.tipo === 'chat') {
+            if (parsed.tipo === 'direct-mensage') {
                 mostrarMensaje(parsed.texto, 'vendedor', boxMensajes);
             }
 
@@ -38,7 +38,7 @@ export function setupChat(socket) {
 
         if (texto !== "") {
             //enviamos el mensaje en formato JSON
-            socket.write(b4a.from(JSON.stringify({ tipo: 'chat', texto: texto })));
+            socket.write(JSON.stringify({ type: 'direct-message', content: texto }))
 
             mostrarMensaje(texto, 'tu', boxMensajes); //mostrar el mensaje 
             inputChat.value = ""; //limpia el imput

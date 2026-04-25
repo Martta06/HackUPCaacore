@@ -89,8 +89,16 @@ export class Marketplace extends EventEmitter {
         return false
     }
 
-
-
+    /**
+     * Envía un anuncio a todos los peers conectados en la sala global.
+     * Ideal para que los vendedores anuncien su clave pública.
+     */
+    broadcastAnnouncement(content) {
+        const payload = JSON.stringify({ type: 'announcement', content })
+        for (const peerId in this.peers) {
+            this.peers[peerId].write(payload)
+        }
+    }
     /**
      * Destruye el enjambre (swarm) de forma segura (llama a esto cuando se cierre la app)
      */
