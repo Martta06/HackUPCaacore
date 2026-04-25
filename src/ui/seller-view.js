@@ -6,19 +6,19 @@ export function renderSellerView() {
         <!-- PANTALLA 1: Tienda -->
         <div id="pantalla-tienda">
             <div id="tienda-header">
-                <h2>Tu Tienda S2B</h2>
+                <h2>Your Store S2B</h2>
                 <button id="btn-abrir-chat-seller">💬 Chat <span id="bolita" style="display:none">🔴</span></button>
             </div>
             <div id="claves-box">
-                <p>Comparte esta clave con tus compradores:</p>
+                <p>Share this key with your buyers:</p>
                 <div id="clave-row">
-                    <span id="clave-texto">Cargando...</span>
-                    <button id="btn-copiar">Copiar</button>
+                    <span id="clave-texto">Loading...</span>
+                    <button id="btn-copiar">Copy</button>
                 </div>
             </div>
             <div id="productos-header">
-                <h3>Tus productos</h3>
-                <button id="btn-añadir">+ Añadir producto</button>
+                <h3>Your products</h3>
+                <button id="btn-añadir">+ Add product</button>
             </div>
             <div id="lista-productos-seller"></div>
         </div>
@@ -26,28 +26,28 @@ export function renderSellerView() {
         <!-- PANTALLA 2: Chat -->
         <div id="pantalla-chat-seller" style="display:none">
             <div id="chat-header">
-                <button id="btn-volver-seller">← Volver</button>
-                <h3 id="chat-titulo">Chat con el comprador</h3>
+                <button id="btn-volver-seller">← Return</button>
+                <h3 id="chat-titulo">Chat with the buyer</h3>
             </div>
             <div id="mensajes"></div>
             <div id="chat-input-area">
-                <input id="input-chat" type="text" placeholder="Escribe un mensaje..." />
-                <button id="btn-enviar">Enviar</button>
+                <input id="input-chat" type="text" placeholder="Write a message..." />
+                <button id="btn-enviar">Send</button>
             </div>
         </div>
 
         <!-- PANTALLA 3: Añadir producto -->
         <div id="pantalla-añadir" style="display:none">
             <div id="añadir-header">
-                <button id="btn-volver-añadir">← Volver</button>
-                <h3>Añadir producto</h3>
+                <button id="btn-volver-añadir">← Return</button>
+                <h3>Add product</h3>
             </div>
             <div id="formulario-producto">
-                <input id="input-nombre" type="text" placeholder="Nombre del producto" />
-                <input id="input-precio" type="number" placeholder="Precio en €" />
-                <textarea id="input-descripcion" placeholder="Descripción del producto..."></textarea>
+                <input id="input-nombre" type="text" placeholder="Name of the product" />
+                <input id="input-precio" type="number" placeholder="Price (€)" />
+                <textarea id="input-descripcion" placeholder="Description..."></textarea>
                 <input id="input-imagen" type="file" accept="image/*" multiple />
-                <button id="btn-guardar-producto">Guardar producto</button>
+                <button id="btn-guardar-producto">Save</button>
             </div>
         </div>
     `
@@ -97,8 +97,8 @@ export async function initSellerView(node) {
     document.getElementById('btn-copiar').onclick = () => {
         navigator.clipboard.writeText(catalog.publicKey)
         const btn = document.getElementById('btn-copiar')
-        btn.textContent = '✓ Copiado'
-        setTimeout(() => { btn.textContent = 'Copiar' }, 1500)
+        btn.textContent = '✓ Copied'
+        setTimeout(() => { btn.textContent = 'Copy' }, 1500)
     }
 
     document.getElementById('btn-añadir').onclick = () => {
@@ -121,7 +121,7 @@ export async function initSellerView(node) {
             for (const texto of mensajesPendientes) {
                 const p = document.createElement('p')
                 p.className = 'msg-vendedor'  // ← usa la clase CSS en lugar de estilos hardcodeados
-                p.innerText = `Comprador: ${texto}`
+                p.innerText = `Buyer: ${texto}`
                 boxMensajes.appendChild(p)
             }
             mensajesPendientes.length = 0
@@ -129,7 +129,7 @@ export async function initSellerView(node) {
             setupChat(chatSocketActivo)
         } else {
             document.getElementById('mensajes').innerHTML =
-                '<p style="color:#888; padding:10px">Aún no hay compradores conectados.</p>'
+                '<p style="color:#888; padding:10px">No buyers connected.</p>'
         }
     }
 
@@ -162,6 +162,13 @@ export async function initSellerView(node) {
             { name: nombre, price: precio, description: descripcion },
             images
         )
+
+        if (chatSocketActivo) {
+            console.log('📤 Enviando catalogo-actualizado al buyer')
+            chatSocketActivo.write(JSON.stringify({ tipo: 'catalogo-actualizado' }))
+        } else {
+            console.log('⚠️ No hay socket activo')
+        }
 
         document.getElementById('input-nombre').value = ''
         document.getElementById('input-precio').value = ''
@@ -222,10 +229,14 @@ export async function initSellerView(node) {
 
             const btnBorrar = document.createElement('button')
             btnBorrar.className = 'btn-eliminar'
-            btnBorrar.textContent = '🗑️ Eliminar'
+            btnBorrar.textContent = '🗑️ Delete'
             btnBorrar.onclick = async () => {
                 if (confirm(`¿Eliminar "${p.name}"?`)) {
                     await catalog.deleteProduct(p.id)
+
+                    if (chatSocketActivo) {
+                        chatSocketActivo.write(JSON.stringify({ tipo: 'catalogo-actualizado' }))
+                    }
                     await refrescarProductos()
                 }
             }

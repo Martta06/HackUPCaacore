@@ -47,10 +47,10 @@ function mostrarMensaje(texto, autor, contenedor) {
 
     if (autor === 'vendedor') {
         p.className = 'msg-vendedor';
-        p.innerText = `Vendedor: ${texto}`;
+        p.innerText = `Seller: ${texto}`;
     } else {
         p.className = 'msg-yo';
-        p.innerText = `Tú: ${texto}`;
+        p.innerText = `You: ${texto}`;
     }
 
     contenedor.appendChild(p);

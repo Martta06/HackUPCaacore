@@ -6,16 +6,16 @@ export function renderBuyerView() {
         <!-- PANTALLA 1: Conexión -->
         <div id="pantalla-conexion">
             <h2>S2B</h2>
-            <p>Introduce la clave de la tienda:</p>
-            <input id="input-clave" type="text" placeholder="Pega aquí la clave..." />
-            <button id="btn-conectar">Conectar</button>
+            <p>Insert the store's key:</p>
+            <input id="input-clave" type="text" placeholder="Add here the key..." />
+            <button id="btn-conectar">Connect</button>
             <p id="estado-conexion"></p>
         </div>
 
         <!-- PANTALLA 2: Catálogo -->
         <div id="pantalla-catalogo" style="display:none">
             <div id="catalogo-header">
-                <h2>Tienda P2P de Ropa</h2>
+                <h2>S2B</h2>
                 <button id="btn-abrir-chat">💬 Chat</button>
             </div>
             <div id="lista-productos"></div>
@@ -24,13 +24,13 @@ export function renderBuyerView() {
         <!-- PANTALLA 3: Chat -->
         <div id="pantalla-chat" style="display:none">
             <div id="chat-header">
-                <button id="btn-volver">← Volver</button>
-                <h3 id="chat-titulo">Chat con la tienda</h3>
+                <button id="btn-volver">← Return</button>
+                <h3 id="chat-titulo">Chat with the store</h3>
             </div>
             <div id="mensajes"></div>
             <div id="chat-input-area">
-                <input id="input-chat" type="text" placeholder="Escribe un mensaje..." />
-                <button id="btn-enviar">Enviar</button>
+                <input id="input-chat" type="text" placeholder="Write a message..." />
+                <button id="btn-enviar">Send</button>
             </div>
         </div>
     `
@@ -55,18 +55,37 @@ export async function initBuyerView(node) {
             return
         }
 
-        document.getElementById('estado-conexion').innerText = '🔍 Conectando...'
+        document.getElementById('estado-conexion').innerText = '🔍 Connecting...'
 
         try {
             seller = await discoverSeller(node, sellerKey)
             // Damos un poco de tiempo para que llegue el catálogo
             await new Promise(r => setTimeout(r, 2000))
+            
+            const socket = seller.getChatSocket()
+            if (socket) {
+                socket.on('data', async (data) => {
+                    console.log('📨 Dato recibido en buyer:', data.toString())
+                    try {
+                        const parsed = JSON.parse(data.toString())
+                        console.log('✅ Parsed:', parsed)
+                        if (parsed.tipo === 'catalogo-actualizado') {
+                            console.log('🔄 Refrescando productos...')
+                            const nuevos = await seller.refreshProducts()
+                            console.log('📦 Productos nuevos:', nuevos)
+                            renderProductos(seller.products)
+                        }
+                    } catch(e){
+                        console.log('❌ Error parseando:', e)
+                    }
+                })
+            }
 
             document.getElementById('estado-conexion').innerText = '✅ Conectado!'
             mostrarPantalla('pantalla-catalogo')
             renderProductos(seller.products)
         } catch (e) {
-            document.getElementById('estado-conexion').innerText = '❌ Error al conectar'
+            document.getElementById('estado-conexion').innerText = '❌ Failed to connect'
             console.error(e)
         }
     }

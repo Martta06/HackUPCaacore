@@ -47,6 +47,23 @@ export async function discoverSeller (node, sellerPublicKey) {
         products,
         sellerKey: sellerPublicKey,
 
+        // Actualiza lo que ve el comprador cuando el seller actualiza su página
+        async refreshProducts() {
+            await core.update({wait:true })
+            await new Promise(r => setTimeout(r, 2000))
+            const nuevos = []
+            for await (const { value } of bee.createReadStream({
+                gt: 'product:',
+                lt: 'product:~'
+            })) {
+                nuevos.push(value)
+            }
+
+            this.products = nuevos
+            return nuevos
+
+        },
+
         // Devuelve la imagen como buffer + metadatos
         getImage (imageRef) {
             return {
