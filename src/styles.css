@@ -499,3 +499,88 @@ nav p { font-size: 0.85rem; color: #aaa; }
     color: white;
     border-color: #e75480;
 }
+
+/* --- PANTALLA SELECCIÓN DE ROL --- */
+#pantalla-rol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Ocupa toda la pantalla */
+    text-align: center;
+    padding: 20px;
+    background: #fafafa;
+}
+
+#pantalla-rol h1 {
+    font-size: 2.5rem;
+    color: #e75480;
+    margin-bottom: 10px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+#pantalla-rol p {
+    color: #888;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+/* Contenedor de botones para que se vean en bloque o fila según espacio */
+#pantalla-rol button {
+    width: 100%;
+    max-width: 350px;
+    margin: 10px 0;
+    padding: 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Botón Vendedor (Sólido para destacar) */
+#btn-rol-seller {
+    background: #e75480;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(231, 84, 128, 0.2);
+}
+
+#btn-rol-seller:hover {
+    background: #c73d68;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(231, 84, 128, 0.3);
+}
+
+/* Botón Comprador (Estilo Outline) */
+#btn-rol-buyer {
+    background: white;
+    color: #e75480;
+    border: 2px solid #f9a8c9;
+}
+
+#btn-rol-buyer:hover {
+    background: #fff0f5;
+    border-color: #e75480;
+    transform: translateY(-2px);
+}
+
+/* Ajuste para pantallas más grandes: poner botones de lado a lado */
+@media (min-width: 600px) {
+    #pantalla-rol {
+        flex-direction: column; /* Mantiene el título arriba */
+    }
+    
+    /* Si prefieres que en PC salgan uno al lado del otro, 
+       puedes envolver los botones en un div en el JS, 
+       pero con tu estructura actual (h1, p, button, button), 
+       lo mejor es que crezcan un poco en ancho */
+    #pantalla-rol button {
+        max-width: 400px;
+    }
+}
