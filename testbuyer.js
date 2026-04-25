@@ -3,8 +3,8 @@ import { discoverSeller } from './src/p2p/buyer.js'
 import fs from 'fs/promises'
 
 // Pegad aquí las claves que imprime el seller
-const SELLER_KEY = 'PEGA_AQUI_LA_SELLER_KEY'
-const BLOBS_KEY  = 'PEGA_AQUI_LA_BLOBS_KEY'
+const SELLER_KEY = 'a83f4e1abd1093ea5128db90476b0edafcb0a4ffcc00996dff7024bb76d6de8d'
+const BLOBS_KEY  = 'f0e68841a3261e984d4055208fdbfce99243c7566994241355b4539aac6dfc34'
 
 async function main () {
   console.log('🟡 Arrancando nodo buyer...')

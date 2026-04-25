@@ -26,9 +26,13 @@ export async function discoverSeller(node, sellerPublickey, sellerBlobskey) {
 
 
     // Hasta ahora hemos conectado correctamente los nodos pero aquí vemos el catálogo de lo que ofrecen
+
     await core.update({wait: true})
     await blobCore.update({wait: true})
-    await new Promise(resolve => setTimeout(resolve, 2000)) // Espera después de unirse al swarn
+
+    console.log('🟡 Esperando replicación del catálogo...')
+    await new Promise(resolve => setTimeout(resolve, 5000)) // Espera después de unirse al swarn
+    await core.update({ wait: true })
 
 
     // Con esto conseguimos una réplica de la infraestructura del vendedor
