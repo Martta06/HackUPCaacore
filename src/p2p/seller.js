@@ -69,6 +69,7 @@ export async function createSellerCatalog (node) {
             await bee.del(`product:${id}`)
         },
 
+
         onPeerConnect (callback) {
             node.swarm.on('connection', (socket) => {
                 callback (socket)

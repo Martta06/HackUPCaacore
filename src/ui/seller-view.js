@@ -163,9 +163,13 @@ export async function initSellerView(node) {
             images
         )
 
+        const productosActualizados = await catalog.listProducts()
         if (chatSocketActivo) {
             console.log('📤 Enviando catalogo-actualizado al buyer')
-            chatSocketActivo.write(JSON.stringify({ tipo: 'catalogo-actualizado' }))
+            chatSocketActivo.write(JSON.stringify({
+                tipo: 'catalogo-actualizado',
+                productos: productosActualizados
+                }))
         } else {
             console.log('⚠️ No hay socket activo')
         }
@@ -234,8 +238,15 @@ export async function initSellerView(node) {
                 if (confirm(`¿Eliminar "${p.name}"?`)) {
                     await catalog.deleteProduct(p.id)
 
+                    const productosActualizados = await catalog.listProducts()
+
+
                     if (chatSocketActivo) {
-                        chatSocketActivo.write(JSON.stringify({ tipo: 'catalogo-actualizado' }))
+                        chatSocketActivo.write(JSON.stringify({ 
+                            tipo: 'catalogo-actualizado', 
+                        
+                            productos: productosActualizados
+                        }))
                     }
                     await refrescarProductos()
                 }
